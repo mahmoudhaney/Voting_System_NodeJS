@@ -1,0 +1,102 @@
+:root{
+    --main-color: #2c4755;
+    --second-color: #10cab7;
+    --main-padding: 100px;
+    --main-duration: 0.3s;
+    --grey-color: #f6f6ff;
+}
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+/* Navbar */
+.navbar{
+    background-color: var(--main-color);
+}
+.nav__li{
+    padding: 15px;
+}
+.nav__a{
+    text-decoration: none;
+    color: white;
+    text-decoration: 700;
+}
+.nav__a:hover{
+    text-decoration: none;
+    color: var(--second-color);
+}
+.nav__btn:hover{
+    color: var(--main-color);
+    background-color: white;
+    box-shadow: 1px 1px 8px 1px var(--main-color), -1px -1px 8px 1px var(--main-color);
+}
+/* Navbar */
+
+/* landing voter */
+.landing{
+    background-image: linear-gradient(to right, var(--second-color), var(--grey-color));
+    color: white;
+    padding: 5%;
+}
+.vote_btn{
+    text-decoration: none;
+    background-color: var(--main-color);
+    padding: 12px 24px;
+    border-radius: 10px;
+    color: white;
+    transition: transform 250ms ease-in-out; 
+    margin-left: auto; 
+    margin-bottom: 10px;  
+    margin-top: 10px;
+}
+.vote_btn:hover{
+    color: var(--main-color);
+    background-color: white;
+    box-shadow: 1px 1px 8px 1px var(--main-color), -1px -1px 8px 1px var(--main-color);
+}
+.landing_h1{
+    font-size: 40px;
+    font-weight: 600;
+    text-shadow: 2px 2px var(--main-color);
+}
+.landing_p{
+    border: 1px solid var(--main-color);
+    box-shadow: 2px 2px 10px 1px var(--main-color);
+    border-top-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    padding: 10px;
+    margin: 25px;
+    background-color: white;
+    color: black;
+}
+/* landing voter */
+
+/* Start Candidate */
+.candidate{
+    background-image: var(--grey-color);
+}
+/* End Candidate */
+
+/* About */
+.aboutt{
+    background-image: linear-gradient(to right, var(--second-color), var(--grey-color));
+}
+/* About */
+
+/* Contact US */
+.contact-form-home{
+    border: 2px #2c4755 solid;
+    padding: 20px;
+    box-shadow: -2px -2px 4px 1px #2c4755, 2px 2px 4px 1px #2c4755;
+}
+.contact-form-home input,
+.text_form, .input-group-text{
+    border: 1px #2c4755 solid;
+    box-shadow: -2px -2px 4px 1px #2c4755, 2px 2px 4px 1px #2c4755;
+}
+.special_input{
+    border-left:0px;
+}
+/* Contact US */
