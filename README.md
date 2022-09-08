@@ -25,7 +25,7 @@ can also view an election’s result.
 - [x]  4. System Architecture – including applied Architectural Pattern(s)
 - [x]  5. Activity Diagrams
 - [x]  6. Database Specification (ERD, Tables)
-- [x]  7. Object Diagrams (Including object diagrams that illustrate the preconditions and the post-conditions of selected functions)
+- [x]  7. Object Diagrams
 - [x]  8. Package Diagram(s)
 - [x]  9. Sequence Diagrams including System Sequence Diagrams (SSDs)
 - [x]  10. Collaboration/Communication Diagrams
