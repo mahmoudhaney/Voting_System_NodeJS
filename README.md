@@ -1,37 +1,37 @@
-# Voting_System
-An online voting website in PHP &amp; Bootstrap "Fourth Semester" & SQL <br />
-
-Project Documentation (SRS):
+### Project Documentation (SRS):
 [Our Final Project.pdf](https://github.com/mahmoudhaney/Voting_System/files/9470573/Our.Final.Project.pdf)<br />
 
-Project Description:
-![ProjectDescription](https://user-images.githubusercontent.com/83553963/187937528-78d4ea21-c62d-4d87-b045-36897714a3b7.png)<br /><br />
+### Project Description:
+Fingerprint-based Voting is an application where the user (a voter) is recognized by his fingerprint. Since the fingerprint
+pattern for each human being is different, the voter can be easily authenticated. The system allows the voter to vote by
+using his fingerprint. A voter can vote for the candidate only once, the system will not allow the user to vote a second
+time. The system will allow the admins to add elections, and add the candidates’ names and photos (those who are
+nominated for an election). Admins only have the right to add candidates’ names and photos.
 
-Project Requirements:
-- [x]  Object-Oriented Technologies & PHP
-- [x]  ***Design phase***, you’re expected to design at least 5 functions\member.
-- [x]  ***Implementation phase***, you’re expected to implement at least 3 functions\member.
-- [x]  **1. Functional Requirements**
-- [x]  **2. Non-Functional Requirements**
-- [x]  **3. Use-Case Diagram(s)** *including general use-cases for the system, and the detailed use-cases description*
-- [x]  **4. System Architecture –** *including applied Architectural Pattern(s)*
-- [x]  **5. Activity Diagrams**
-- [x]  **6. Database Specification** *(ERD, Tables)*
-- [x]  **7. Class Diagram** *(Interfaces, Classes, Relations) –* An initial version based on the requirements and Use-Case/Activity diagrams.
-- [x]  **8. Object Diagrams** *(Including object diagrams that illustrate the preconditions and the post-conditions of selected functions)*
-- [x]  **9. Package Diagram(s)**
-- [x]  **10. Sequence Diagrams** *including **System Sequence Diagrams (SSDs)***
-- [x]  **1. Collaboration/Communication Diagrams**
-- [x]  **2. Class Diagram** *(3 versions)*
-    - [x]  2.1 **An initial version based on the requirements and Use-Case/Activity diagrams. [ Submitted in phase 1 ]**
-    - [ ]  2.2 **An intermediate version based on the interaction diagrams.**
-    - [ ]  2.3 **A final version, after applying the design patterns and any other modifications.**
-- [ ]  **3. Three Mandatory Design Patterns Applied** *(Including a typed description)*
-- [x]  **4. Front End Design for all Functions** *(HTML, Bootstrap)*
-- [ ]  **5. Implementation based on the submitted Requirements & Design. Should include at least 4 of the following modules (in addition of course to modules specific to your individual projects):**
-    - [ ]  5.1 **User Role Management Module.**
-    - [ ]  5.2 **User manipulation Module** *(Login, Add / Delete / Update / Search, List).*
-    - [ ]  5.3 **Controlling Resources Module** *(Rooms, Orders, Products, ... etc.).*
-    - [ ]  5.4 **Reservation and Rescheduling Module.**
-    - [ ]  5.5 **Generating Reports Module** *(PDFs, … etc.).*
-    - [ ]  5.6 **Sending Emails or Notifications Module.**
+Admins will register the voter’s name by verifying the voter/user through his/her identity proof (and then the admin will register the voter). The
+candidates added to the system by the admins will be automatically deleted after the completion of an election. Admins
+have to add the date on which an election is going to end. Once a user has received the user id and password from the
+admin, the user can log in and vote for a candidate from those who are nominated.
+
+The system will allow the user to vote for only one candidate. The system will allow the user to vote once in a particular election. Admins can add any number
+of candidates when a new election is announced. Admins can also view an election’s result by using the election id. A user
+can also view an election’s result.
+
+### Project Requirements:
+- [x]  Object-Oriented Technologies, PHP, SQL & Bootstrap
+- [x]  1. Functional Requirements
+- [x]  2. Non-Functional Requirements
+- [x]  3. Use-Case Diagram(s) including general use-cases for the system, and the detailed use-cases description
+- [x]  4. System Architecture – including applied Architectural Pattern(s)
+- [x]  5. Activity Diagrams
+- [x]  6. Database Specification (ERD, Tables)
+- [x]  7. Object Diagrams (Including object diagrams that illustrate the preconditions and the post-conditions of selected functions)
+- [x]  8. Package Diagram(s)
+- [x]  9. Sequence Diagrams including System Sequence Diagrams (SSDs)
+- [x]  10. Collaboration/Communication Diagrams
+- [x]  11. Class Diagram (Interfaces, Classes, Relations) (3 versions)
+    - [x]  11.1 An initial version based on the requirements and Use-Case/Activity diagrams
+    - [x]  11.2 An intermediate version based on the interaction diagrams
+    - [x]  11.3 A final version, after applying the design patterns and any other modifications
+- [x]  12. Front End Design for all Functions (HTML, Bootstrap)
+- [x]  13. Implementation based on the submitted Requirements & Design
