@@ -35,3 +35,7 @@ can also view an election’s result.
     - [x]  11.3 A final version, after applying the design patterns and any other modifications
 - [x]  12. Front End Design for all Functions (HTML, Bootstrap)
 - [x]  13. Implementation based on the submitted Requirements & Design
+
+
+https://user-images.githubusercontent.com/83553963/189194661-9e8a1e13-1ae9-4bfa-9d53-0d0b6e8599d6.mp4
+
