@@ -1,10 +1,12 @@
 class Election {
 
-    constructor (name, start_date, end_date, is_active) {
+    constructor (id, name, start_date, end_date, is_active, admin_id) {
+        this.ID = id;
         this.name = name;
         this.start_date = start_date;
         this.end_date = end_date;
         this.is_active = is_active;
+        this.admin_id = admin_id;
     }
 
     getId() {
@@ -32,11 +34,18 @@ class Election {
         this.end_date = end_date;
     }
 
-    getis_active() {
+    getIsActive() {
         return this.is_active;
     }
-    setis_active(is_active) {
+    setIsActive(is_active) {
         this.is_active = is_active;
+    }
+
+    getAdminId() {
+        return this.admin_id;
+    }
+    setAdminId(admin_id) {
+        this.admin_id = admin_id;
     }
 };
 

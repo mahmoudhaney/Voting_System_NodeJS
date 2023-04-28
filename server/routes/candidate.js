@@ -5,6 +5,7 @@ const upload = require('../middleware/uploadImages');
 const {body, validationResult} = require("express-validator");
 const util = require("util");
 const fs = require("fs");
+const { Candidate } = require('../models/Candidate')
 
 // ==================== Admin ====================
 // Add candidate
@@ -15,13 +16,22 @@ router.post(
     body("name").isString().withMessage("please enter a valid name"), 
     body("mobile").isNumeric().withMessage("enter a valid ID").isLength(11).withMessage("Number must be 11 digits"),
     body("email").isEmail().withMessage("enter a valid email!"), 
-    body("election").isNumeric().withMessage("enter a valid election!"),
+    body("election_id").isNumeric().withMessage("enter a valid election ID !"),
     async (req, res) => {
         try {
             // 1- Valid Request
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
                 return res.status(400).json({errors: errors.array()});
+            }
+
+            // 3- Check if email exists
+            const query = util.promisify(connection.query).bind(connection);
+            const emailExist = await query("select * from candidates where email = ?", [req.body.email]);
+            if(emailExist.length > 0){
+                res.status(400).json({
+                    errors: [{msg: "email already exist !"},],
+                });
             }
 
             // 2- Validate the image
@@ -32,19 +42,21 @@ router.post(
             }
 
             // 3- Prepare candidate object
-            const candidate = {
-                name: req.body.name,
-                Email: req.body.email,
-                Mobile: req.body.mobile,
-                photo: req.file.filename,
-                election_id: req.body.election,
-            };
+            const candidate = new Candidate();
+            delete candidate.ID;
+            candidate.setName(req.body.name);
+            candidate.setEmail(req.body.email);
+            candidate.setMoblie(req.body.mobile);
+            candidate.setPhoto(req.file.filename);
+            candidate.setNumOfVotes(0);
+            candidate.setElectionId(req.body.election_id);
+            candidate.setAdminId(res.locals.admin.ID);
 
             // 4- Insert candidate object into Database
-            const query = util.promisify(connection.query).bind(connection);
-            await query("insert into candidate set ? ", candidate);
+            await query("insert into candidates set ? ", candidate);
             res.status(200).json({msg: "Candidate added Successfully",});
         } catch (error) {
+            console.log(error)
             res.status(500).json(error);
         }
 });
@@ -68,19 +80,21 @@ router.put(
 
             // 2- Check if the candidate exist
             const query = util.promisify(connection.query).bind(connection);
-            const candidate = await query("select * from candidate where id = ? ", [req.params.id]);
+            const candidate = await query("select * from candidates where id = ? ", [req.params.id]);
             if (!candidate[0]) {
                 res.status(404).json({msg: "candidate not found"});
             }
 
             // 3- Prepare movie object
-            const editedCandidate = {
-                name: req.body.name,
-                Email: req.body.email,
-                Mobile: req.body.mobile,
-                photo: req.file.filename,
-                election_id: req.body.election,
-            };
+            const editedCandidate = new Candidate();
+            delete editedCandidate.ID;
+            delete editedCandidate.num_of_votes;
+            editedCandidate.setName(req.body.name);
+            editedCandidate.setEmail(req.body.email);
+            editedCandidate.setMoblie(req.body.mobile);
+            editedCandidate.setPhoto(req.file.filename);
+            editedCandidate.setElectionId(req.body.election_id);
+            editedCandidate.setAdminId(res.locals.admin.ID);
             
             if(req.file){
                 editedCandidate.photo = req.file.filename;
@@ -88,7 +102,7 @@ router.put(
             }
 
             // 4- Update the movie            
-            await query("update candidate set ? where id = ? ", [editedCandidate, candidate[0].ID]);
+            await query("update candidates set ? where id = ? ", [editedCandidate, candidate[0].ID]);
             res.status(200).json({msg: "Candidate Updated Successfully",});
         } catch (error) {
             res.status(500).json(error);
@@ -103,7 +117,7 @@ router.delete(
         try {
             // 1- Check if the candidate exist
             const query = util.promisify(connection.query).bind(connection);
-            const candidate = await query("select * from candidate where id = ? ", [req.params.id]);
+            const candidate = await query("select * from candidates where id = ? ", [req.params.id]);
             if (!candidate[0]) {
                 res.status(404).json({msg: "candidate not found"});
             }
@@ -112,7 +126,7 @@ router.delete(
             fs.unlinkSync("./uploads/" + candidate[0].photo);
 
             // 3- Delete the candidate            
-            await query("delete from candidate where id = ? ", [candidate[0].ID]);
+            await query("delete from candidates where id = ? ", [candidate[0].ID]);
             res.status(200).json({msg: "Candidate Deleted Successfully",});
         } catch (error) {
             res.status(500).json(error);
@@ -128,7 +142,7 @@ router.get("", async (req, res) => {
     if (req.query.search) {
         search = `where name LIKE '%${req.query.search}%'`
     }
-    const candidates = await query(`select * from candidate ${search}`);
+    const candidates = await query(`select * from candidates ${search}`);
     candidates.map((candidate) => {
         candidate.photo = "http://" + req.hostname + ":5000/" + candidate.photo;
     });
@@ -139,7 +153,7 @@ router.get("", async (req, res) => {
 router.get("/:id", async (req, res) => {
     // 1- Check if the candidate exist
     const query = util.promisify(connection.query).bind(connection);
-    const candidate = await query("select * from candidate where id = ? ", [req.params.id]);
+    const candidate = await query("select * from candidates where id = ? ", [req.params.id]);
     if (!candidate[0]) {
         res.status(404).json({msg: "candidate not found"});
     }
