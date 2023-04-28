@@ -4,6 +4,7 @@ const admin = require('../middleware/admin');
 const authorized = require('../middleware/authorized')
 const {body, validationResult} = require("express-validator");
 const util = require("util");
+const { Election } = require("../models/Election");
 
 // Create New Election
 router.post(
@@ -21,15 +22,16 @@ router.post(
             }
 
             // 2- Prepare movie object
-            const election = {
-                name: req.body.name,
-                elec_start_date: req.body.start_date,
-                elec_end_date: req.body.end_date,
-                // admin_id: res.locals.admin.ID,
-            };
+            const election = new Election (
+                req.body.name,
+                req.body.start_date,
+                req.body.end_date,
+                0
+            );
 
             // 3- Insert movie object into Database
             const query = util.promisify(connection.query).bind(connection);
+            
             await query("insert into election set ? ", election);
             res.status(200).json({msg: "Election Created Successfully",});
         } catch (error) {
