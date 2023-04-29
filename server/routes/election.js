@@ -149,16 +149,28 @@ router.put(
 
             const query = util.promisify(connection.query).bind(connection);
 
-            // 2- Check if the election exist
+            // 2- Check if the chosen election exist and still running
             const election = await query("select * from elections where id = ? ", [req.params.id]);
             if (!election[0]) {
-                res.status(404).json({msg: "election not found"});
+                return res.status(404).json({msg: "election not found"});
+            }
+            if (!election[0].is_active) {
+                return res.status(404).json({msg: "this election is over"});
             }
 
-            // 2- Check if the candidate exist
+            // 2- Check if the chosen candidate exist and nominated in the chosen election
             const candidate = await query("select * from candidates where id = ? ", [req.body.candidate_id]);
             if (!candidate[0]) {
                 res.status(404).json({msg: "candidate not found"});
+            }
+            if (candidate[0].election_id != election[0].ID) {
+                res.status(404).json({msg: "this candidate isn't nominated in this election"});
+            }
+
+            // Make sure it's the first time to vote
+            const voter = await query("select * from users where id = ? ", [res.locals.voter.ID]);
+            if(voter[0].voted) {
+                return res.status(400).json({msg: "you've already voted before"});
             }
 
             // 3- Doing the voting logic

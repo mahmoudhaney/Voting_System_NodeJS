@@ -34,6 +34,15 @@ router.post(
                 });
             }
 
+            // 2- Check if the chosen election exist and still running
+            const election = await query("select * from elections where id = ? ", [req.body.election_id]);
+            if (!election[0]) {
+                return res.status(404).json({msg: "election not found"});
+            }
+            if (!election[0].is_active) {
+                return res.status(404).json({msg: "this election is over"});
+            }
+
             // 2- Validate the image
             if(!req.file){
                 return res.status(400).json({
