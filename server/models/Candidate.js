@@ -1,3 +1,6 @@
+const connection = require('../db/connection');
+const util = require("util");
+
 class Candidate {
 
     constructor (id, name, email, mobile, photo, num_of_votes, election_id, admin_id) {
@@ -62,6 +65,42 @@ class Candidate {
     }
     setAdminId(admin_id) {
         this.admin_id = admin_id;
+    }
+
+    static async IsMobileExist(mobile) {
+        const query = util.promisify(connection.query).bind(connection);
+        const emailExist = await query("select * from candidates where mobile = ?", [mobile]);
+        if(emailExist.length > 0){
+            return true;
+        }
+        return false;
+    }
+
+    static async IsEmailExist(email) {
+        const query = util.promisify(connection.query).bind(connection);
+        const emailExist = await query("select * from candidates where email = ?", [email]);
+        if(emailExist.length > 0){
+            return true;
+        }
+        return false;
+    }
+
+    static async IsExist(id) {
+        const query = util.promisify(connection.query).bind(connection);
+        const candidate = await query("select * from candidates where id = ? ", [id]);
+        if (candidate[0]) {
+            return true;
+        }
+        return false;
+    }
+
+    static async IsNominated(election_id, candidate_id) {
+        const query = util.promisify(connection.query).bind(connection);
+        const candidate = await query("select election_id from candidates where id = ? ", candidate_id);
+        if (candidate[0].election_id == election_id) {
+            return true;
+        }
+        return false;
     }
 };
 

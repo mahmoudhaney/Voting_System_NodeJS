@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const { User } = require("../models/User");
 
-// API for Regisration
+// Regisration
 router.post(
     "/register",
     body("name").isString().withMessage("enter a valid name").isLength({min: 8, max: 25}).withMessage("name range 8 : 25"),
@@ -15,80 +15,52 @@ router.post(
     body("password").isLength({min: 8, max: 15}).withMessage("password range 8 : 15"),
     async (req, res) => {
     try {
-        // 1- Valid Request
+        // Valid Request
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({errors: errors.array()});
+            res.status(400).json({errors: errors.array()});
+        } else if (await User.IsIdProofExist(req.body.id_proof)) {
+            res.status(404).json({msg: "id proof already exist !"});
+        } else if (await User.IsEmailExist(req.body.email)) {
+            res.status(404).json({msg: "email already exist !"});
+        } else {
+            const user = new User();
+            user.setName(req.body.name);
+            user.setIdProof(req.body.id_proof);
+            user.setEmail(req.body.email);
+            user.setPassword(await bcrypt.hash(req.body.password, 10)),
+            user.setVoted(0);
+            user.setToken(crypto.randomBytes(16).toString("hex"));
+            user.setRole(0);
+
+            const query = util.promisify(connection.query).bind(connection);
+            await query("insert into users set ? ", user);
+            res.status(200).json({msg: "Registered Successfully"});
         }
-
-        // 2- Check if Id proof exists
-        const query = util.promisify(connection.query).bind(connection); //mysql query to promise to use [await/async]
-        const idProofExist = await query("select * from users where id_proof = ?", [req.body.id_proof]);
-        if(idProofExist.length > 0){
-            res.status(400).json({
-                errors: [{msg: "id proof already exist !"},],
-            });
-        }
-
-        // 3- Check if email exists
-        const emailExist = await query("select * from users where email = ?", [req.body.email]);
-        if(emailExist.length > 0){
-            res.status(400).json({
-                errors: [{msg: "email already exist !"},],
-            });
-        }
-
-        // 4- Prepare User object to save
-        const user = new User();
-        user.setName(req.body.name);
-        user.setIdProof(req.body.id_proof);
-        user.setEmail(req.body.email);
-        user.setPassword(await bcrypt.hash(req.body.password, 10)),
-        user.setVoted(0);
-        user.setToken(crypto.randomBytes(16).toString("hex"));
-        user.setRole(0);
-
-        // 5- Insert User Object to Database
-        await query("insert into users set ? ", user);
-        res.status(200).json({msg: "Registered Successfully"});
-        
     } catch (error) {
+        console.log(error)
         res.status(500).json({error: error});
     }
 });
 
-// API for Login
+// Login
 router.post(
     "/login",
     body("email").isEmail().withMessage("enter a valid email!"),
     body("password").isLength({min: 8, max: 15}).withMessage("password range 8 : 15"),
     async (req, res) => {
     try {
-        // 1- Valid Request
+        // Valid Request
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({errors: errors.array()});
-        }
-
-        // 2- Check if email exists
-        const query = util.promisify(connection.query).bind(connection); //mysql query to promise to use [await/async]
-        const user = await query("select * from users where email = ?", [req.body.email]);
-        if(user.length == 0){
-            res.status(404).json({
-                errors: [{msg: "Invalid email or password !"},],
-            });
-        }
-
-        // 3- Compare hashed password
-        const checkPassword = await bcrypt.compare(req.body.password, user[0].password);
-        if(checkPassword){
-            delete user[0].password;
-            res.status(200).json(user[0]);
+        } else if (!await User.IsEmailExist(req.body.email)) {
+            res.status(404).json({msg: "Invalid email !"});
+        } else if (!await User.CheckPassword(req.body.email, req.body.password)){
+            res.status(404).json({msg: "wrong password !"});
         } else {
-            res.status(404).json({
-                errors: [{msg: "Invalid email or password !"},],
-            });
-        }        
+            res.status(200).json({msg: "Login Successfully"});
+        }       
     } catch (error) {
         res.status(500).json({error: error});
     }

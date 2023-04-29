@@ -1,3 +1,6 @@
+const connection = require('../db/connection');
+const util = require("util");
+
 class Election {
 
     constructor (id, name, start_date, end_date, is_active, admin_id) {
@@ -46,6 +49,24 @@ class Election {
     }
     setAdminId(admin_id) {
         this.admin_id = admin_id;
+    }
+
+    static async IsExist(id) {
+        const query = util.promisify(connection.query).bind(connection);
+        const election = await query("select * from elections where id = ? ", [id]);
+        if (election[0]) {
+            return true;
+        }
+        return false;
+    }
+
+    static async IsActive(id) {
+        const query = util.promisify(connection.query).bind(connection);
+        const election = await query("select is_active from elections where id = ? ", [id]);
+        if (election[0].is_active) {
+            return true;
+        }
+        return false;
     }
 };
 
