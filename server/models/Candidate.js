@@ -92,6 +92,17 @@ class Candidate {
         return false;
     }
 
+    static async checkEmail(email, candidate_id) {
+        const query = util.promisify(connection.query).bind(connection);
+        const candidate = await query("select email from candidates where id = ? ", [candidate_id]);
+        console.log(candidate[0].email)
+        console.log(email)
+        if(candidate[0].email == email || !await this.IsEmailExist(email)){
+            return true;
+        }
+        return false;
+    }
+
     static async IsExist(id) {
         const query = util.promisify(connection.query).bind(connection);
         const candidate = await query("select * from candidates where id = ? ", [id]);

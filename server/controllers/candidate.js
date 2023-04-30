@@ -62,6 +62,8 @@ router.put(
                 res.status(400).json({errors: validationResult(req).array()});
             } else if (!await Candidate.IsExist(req.params.id)) {
                 res.status(404).json({msg: "candidate not found !"});
+            } else if (!await Candidate.checkEmail(req.body.email, req.params.id)) {
+                res.status(400).json({msg: "email already exist !!"});
             } else {
                 const editedCandidate = new Candidate();
                 delete editedCandidate.ID;
