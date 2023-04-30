@@ -216,7 +216,7 @@ class Candidate {
                 where candidates.election_id = ${election_id}
                 );`
             );
-            return candidates[0];
+            return candidates;
         } catch (error) {
             console.log(error);
         }
