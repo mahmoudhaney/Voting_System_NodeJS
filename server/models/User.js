@@ -1,6 +1,7 @@
 const connection = require('../db/connection');
 const util = require("util");
 const bcrypt = require("bcrypt");
+const { Candidate } = require('./Candidate');
 
 class User {
 
@@ -69,40 +70,86 @@ class User {
     }
 
     static async IsIdProofExist(id_proof){
-        const query = util.promisify(connection.query).bind(connection);
-        const idProofExist = await query("select * from users where id_proof = ?", [id_proof]);
-        if(idProofExist.length > 0){
-            return true;
+        try {
+            const query = util.promisify(connection.query).bind(connection);
+            const idProofExist = await query("select * from users where id_proof = ?", [id_proof]);
+            if(idProofExist.length > 0){
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.log(error);
         }
-        return false;
     }
 
     static async IsEmailExist(email) {
-        const query = util.promisify(connection.query).bind(connection);
-        const emailExist = await query("select * from users where email = ?", [email]);
-        if(emailExist.length > 0){
-            return true;
+        try {
+            const query = util.promisify(connection.query).bind(connection);
+            const emailExist = await query("select * from users where email = ?", [email]);
+            if(emailExist.length > 0){
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.log(error);
         }
-        return false;
     }
 
     static async CheckPassword(email, password) {
-        const query = util.promisify(connection.query).bind(connection);
-        const user = await query("select password from users where email = ?", [email]);
-        const checkPassword = await bcrypt.compare(password, user[0].password);
-        if(checkPassword){
-            return true;
+        try {
+            const query = util.promisify(connection.query).bind(connection);
+            const user = await query("select password from users where email = ?", [email]);
+            const checkPassword = await bcrypt.compare(password, user[0].password);
+            if(checkPassword){
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.log(error);
         }
-        return false;
     }
 
     static async IsVoted(id) {
-        const query = util.promisify(connection.query).bind(connection);
-        const user = await query("select voted from users where id = ? ", [id]);
-        if (user[0].voted) {
-            return true;
+        try {
+            const query = util.promisify(connection.query).bind(connection);
+            const user = await query("select voted from users where id = ? ", [id]);
+            if (user[0].voted) {
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.log(error);
         }
-        return false;
+    }
+
+    static async Add(user) {
+        try {
+            const query = util.promisify(connection.query).bind(connection);
+            await query("insert into users set ? ", user);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    static async getUsers() {
+        try {
+            const query = util.promisify(connection.query).bind(connection);
+            const users = await query('select ID, name, id_proof, email, voted, token, role from votingsystem.users;');
+            return users;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    static async Vote(candidate_id, voter_id) {
+        try {
+            const query = util.promisify(connection.query).bind(connection);
+            let votes_number = (await Candidate.getNumOfVotes(candidate_id)) + 1;
+            await Candidate.UpdateNumOfVotes(votes_number, candidate_id);
+            await query(`update users set voted = 1 where ID = ${voter_id}`);
+        } catch (error) {
+            console.log(error);
+        }
     }
 };
 

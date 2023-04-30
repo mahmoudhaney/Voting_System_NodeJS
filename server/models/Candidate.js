@@ -1,5 +1,6 @@
 const connection = require('../db/connection');
 const util = require("util");
+const fs = require("fs");
 
 class Candidate {
 
@@ -46,8 +47,14 @@ class Candidate {
         this.photo = photo;
     }
 
-    getNumOfVotes() {
-        return this.num_of_votes;
+    static async getNumOfVotes(id) {
+        try {
+            const query = util.promisify(connection.query).bind(connection);
+            const candidate = await query(`select num_of_votes from candidates where ID = ${id};`);
+            return candidate[0].num_of_votes;
+        } catch (error) {
+            console.log(error);
+        }
     }
     setNumOfVotes(num_of_votes) {
         this.num_of_votes = num_of_votes;
@@ -101,6 +108,107 @@ class Candidate {
             return true;
         }
         return false;
+    }
+
+    static async Add(candidate) {
+        try {
+            const query = util.promisify(connection.query).bind(connection);
+            await query("insert into candidates set ? ", candidate);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    static async Update(editedCandidate, id) {
+        try {
+            const query = util.promisify(connection.query).bind(connection);
+            await query("update candidates set ? where id = ? ", [editedCandidate, id]);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    static async Delete(id) {
+        try {
+            const query = util.promisify(connection.query).bind(connection);
+            await query("delete from candidates where id = ? ", [id]);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    static async getCandidates(search) {
+        try {
+            if (search) {
+                search = `where name LIKE '%${search}%'`
+            }
+            const query = util.promisify(connection.query).bind(connection);
+            const candidates = await query(`select * from candidates ${search}`);
+            candidates.map((candidate) => {
+                candidate.photo = "http://localhost" + ":5000/" + candidate.photo;
+            });
+            return candidates;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    static async getCandidate(id) {
+        try {
+            const query = util.promisify(connection.query).bind(connection);
+            const candidate = await query("select * from candidates where id = ? ", [id]);
+            candidate[0].photo = "http://localhost" + ":5000/" + candidate[0].photo;
+            return candidate[0];
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    static async deleteUploadedPhoto(candidate_id) {
+        try {
+            const query = util.promisify(connection.query).bind(connection);
+            const candidate = await query("select photo from candidates where id = ? ", [candidate_id]);
+            fs.unlinkSync("./uploads/" + candidate[0].photo);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    static async UpdateNumOfVotes(votes, candidate_id) {
+        try {
+            const query = util.promisify(connection.query).bind(connection);
+            await query(`update candidates set num_of_votes = ${votes} where ID = ${candidate_id}`);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    static async electionCandidates(election_id) {
+        try {
+            const query = util.promisify(connection.query).bind(connection);
+            const candidates = await query(`select * from votingsystem.candidates where election_id = ${election_id};`);
+            return candidates;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    static async Winner(election_id) {
+        try {
+            const query = util.promisify(connection.query).bind(connection);
+            const candidates = await query(`select candidates.name, candidates.num_of_votes FROM candidates
+            LEFT JOIN elections
+            ON candidates.election_id = elections.ID 
+            WHERE candidates.num_of_votes = ( 
+                SELECT MAX( candidates.num_of_votes) 
+                from candidates 
+                where candidates.election_id = ${election_id}
+                );`
+            );
+            return candidates[0];
+        } catch (error) {
+            console.log(error);
+        }
     }
 };
 

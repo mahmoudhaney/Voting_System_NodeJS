@@ -28,8 +28,7 @@ router.post(
                 election.setIsActive(1);
                 election.setAdminId(res.locals.admin.ID);
 
-                const query = util.promisify(connection.query).bind(connection);
-                await query("insert into elections set ? ", election);
+                await Election.Add(election);
                 res.status(200).json({msg: "Election Created Successfully",});
             }
         } catch (error) {
@@ -62,8 +61,7 @@ router.put(
                     editedElection.setEndDate(req.body.end_date);
                     editedElection.setAdminId(res.locals.admin.ID);
 
-                    const query = util.promisify(connection.query).bind(connection);
-                    await query("update elections set ? where id = ? ", [editedElection, req.params.id]);
+                    await Election.Update( editedElection, req.params.id);
                     res.status(200).json({msg: "Election Updated Successfully",});
                 }
             }            
@@ -82,7 +80,7 @@ router.delete(
                 res.status(404).json({msg: "election not found !"});
             } else {
                 const query = util.promisify(connection.query).bind(connection);   
-                await query("delete from elections where id = ? ", [req.params.id]);
+                await Election.Delete(req.params.id);
                 res.status(200).json({msg: "Election Deleted Successfully",});
             }
         } catch (error) {
@@ -93,14 +91,7 @@ router.delete(
 // List all elections
 router.get("", async (req, res) => {
     try {
-        let search = "";
-        if (req.query.search) {
-            search = `where name LIKE '%${req.query.search}%'`
-        }
-
-        const query = util.promisify(connection.query).bind(connection);
-        const elections = await query(`select * from elections ${search}`);
-        res.status(200).json(elections);
+        res.status(200).json(await Election.getElections(req.query.search));
     } catch (error) {
         res.status(500).json(error);
     }
@@ -109,9 +100,7 @@ router.get("", async (req, res) => {
 // List Elections History
 router.get("/history", async (req, res) => {
     try {
-        const query = util.promisify(connection.query).bind(connection);
-        const elections = await query(`select * from elections where is_active = 0;`);
-        res.status(200).json(elections);
+        res.status(200).json(await Election.getHistory());
     } catch (error) {
         res.status(500).json(error);
     }
@@ -124,9 +113,7 @@ router.get("/:id", async (req, res) => {
         if (!await Election.IsExist(req.params.id)) {
             res.status(404).json({msg: "election not found !"});
         } else {
-            const query = util.promisify(connection.query).bind(connection);
-            const election = await query("select * from elections where id = ? ", [req.params.id]);
-            res.status(200).json(election[0]);
+            res.status(200).json(await Election.getElection(req.params.id));
         }
     } catch (error) {
         res.status(500).json(error);
@@ -155,11 +142,7 @@ router.put(
                     } else if (!await Candidate.IsNominated(req.params.id, req.body.candidate_id)) {
                         res.status(404).json({msg: "this candidate isn't nominated in this election !"});
                     } else {
-                        const query = util.promisify(connection.query).bind(connection);
-                        const candidate = await query(`select num_of_votes from candidates where ID = ${req.body.candidate_id};`);
-                        const votesNumber = candidate[0].num_of_votes + 1;
-                        await query(`update candidates set num_of_votes = ${votesNumber} where ID = ${req.body.candidate_id}`);
-                        await query(`update users set voted = 1 where ID = ${res.locals.voter.ID}`);
+                        await User.Vote(req.body.candidate_id, res.locals.voter.ID)
                         res.status(200).json({msg: "Voted Successfully"});
                     }
                 }
@@ -185,26 +168,10 @@ router.put(
                 } else if (!await Election.IsActive(req.params.id)) {
                     res.status(400).json({msg: "this election is over !"});
                 } else {
-                    const query = util.promisify(connection.query).bind(connection);
-                    await query(`update elections set is_active = 0 where elections.ID = ${req.params.id};`);
-
-                    election = await query(`select elections.ID, elections.name, elections.start_date, elections.end_date,
-                    SUM(candidates.num_of_votes) As Total_Votes from candidates 
-                    Right Join elections 
-                    ON candidates.election_id = elections.ID 
-                    WHERE elections.ID = ${req.params.id}
-                    Group by elections.name;`);
-
-                    const electionCandidates = await query(`select * from votingsystem.candidates where election_id = ${req.params.id};`);
-
-                    const electionWinner = await query(`select candidates.name, candidates.num_of_votes FROM candidates
-                    LEFT JOIN elections
-                    ON candidates.election_id = elections.ID 
-                    WHERE candidates.num_of_votes = ( SELECT MAX( candidates.num_of_votes) from candidates );`);
-                    
-                    election[0].candidates = electionCandidates;
-                    election[0].winner = electionWinner[0];
-
+                    await Election.endElection(req.params.id);
+                    let election = await Election.electionTotalVotes(req.params.id);             
+                    election[0].candidates = await Candidate.electionCandidates(req.params.id);
+                    election[0].winner = await Candidate.Winner(req.params.id);
                     res.status(200).json(election[0]);
                 }
             }
