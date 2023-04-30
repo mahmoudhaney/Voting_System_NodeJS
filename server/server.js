@@ -5,9 +5,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("uploads"));
 
-const auth = require('./routes/auth');
-const election = require('./routes/election');
-const candidate = require('./routes/candidate');
+const auth = require('./controllers/auth');
+const election = require('./controllers/election');
+const candidate = require('./controllers/candidate');
 
 app.listen(5000, "localhost", () => {
     console.log("SERVER IS RUNNING");
