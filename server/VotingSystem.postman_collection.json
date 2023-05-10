@@ -1,0 +1,544 @@
+{
+	"info": {
+		"_postman_id": "7f39c3d9-10b2-460f-9258-b6a538c6c270",
+		"name": "VotingSystem",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23723164"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Ashraf Atia\",\r\n    \"id_proof\": \"30201012100000\",\r\n    \"email\": \"ashraf@gmail.com\",\r\n    \"password\": \"12345678\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/auth/register",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"ebrahim@gmail.com\",\r\n    \"password\": \"ebrahim123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/auth/login",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/auth/users",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"auth",
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Election",
+			"item": [
+				{
+					"name": "Admin",
+					"item": [
+						{
+							"name": "Create Election",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "token",
+										"value": "49ba8e988c682ac008b156cb73b92c66",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"President\",\r\n    \"start_date\": \"2023-4-20\",\r\n    \"end_date\": \"2023-4-29\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:5000/election",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"election"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Election",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "token",
+										"value": "49ba8e988c682ac008b156cb73b92c66",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"people 3\",\r\n    \"start_date\": \"2023-5-20\",\r\n    \"end_date\": \"2023-6-29\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:5000/election/2",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"election",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Election",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "token",
+										"value": "49ba8e988c682ac008b156cb73b92c66",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:5000/election/5",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"election",
+										"5"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Election Result",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "token",
+										"value": "49ba8e988c682ac008b156cb73b92c66",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:5000/election/result/2",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"election",
+										"result",
+										"2"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "User",
+					"item": [
+						{
+							"name": "List All Elections",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:5000/election?search=3",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"election"
+									],
+									"query": [
+										{
+											"key": "search",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Election",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "token",
+										"value": "1",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:5000/election/3",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"election",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Vote",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "token",
+										"value": "efd5232953b426c4d0a94b739603ab25",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"candidate_id\": \"11\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:5000/election/vote/2",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"election",
+										"vote",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Elections History",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:5000/election/history",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"election",
+										"history"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Candidate",
+			"item": [
+				{
+					"name": "Add Candidate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "49ba8e988c682ac008b156cb73b92c66",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Mansour Ali",
+									"type": "text"
+								},
+								{
+									"key": "mobile",
+									"value": "01115005600",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "mansour@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/Mahmoud Haney/Downloads/faces/face5.jpg"
+								},
+								{
+									"key": "election_id",
+									"value": "2",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:5000/candidate",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"candidate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Candidate",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "token",
+								"value": "49ba8e988c682ac008b156cb73b92c66",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Ashraf Yasser",
+									"type": "text"
+								},
+								{
+									"key": "mobile",
+									"value": "01115005673",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "ashrf@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "election_id",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:5000/candidate/9",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"candidate",
+								"9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Candidate",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "token",
+								"value": "49ba8e988c682ac008b156cb73b92c66",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:5000/candidate/9",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"candidate",
+								"9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List All Candidates",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/candidate",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"candidate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Candidate",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/candidate/10",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"candidate",
+								"10"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
